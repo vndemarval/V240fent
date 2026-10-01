@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envases robados según principio activo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+    <style>
+        body {
+            /* Fondo transparente para que herede el color de fondo de tu bloque en Shorthand */
+            background-color: transparent; 
+            margin: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        /* Ocultar barra de scroll en el iframe si aparece */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <main class="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden p-6 sm:p-10 border border-slate-100">
+        
+        <header class="mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight mb-2">
+                Envases robados según principio activo
+            </h1>
+            <p class="text-base sm:text-lg text-slate-500 font-normal">
+                A laboratorios y droguerías, 2019 a octubre de 2025.
+            </p>
+        </header>
+
+        <div class="relative w-full h-[450px] sm:h-[500px]" id="chart-container"></div>
+
+        <footer class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-400">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Datos del Instituto de Salud Pública, solicitados por Ley de Transparencia</span>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartDom = document.getElementById('chart-container');
+            const myChart = echarts.init(chartDom);
+
+            // Emojis integrados directamente para ahorrar espacio visual
+            const dataY = ['Petidina clor. 💉', 'Alprazolam 💊', 'Fentermina 💊', 'Ketamina 💉', 'Clonazepam 💊'];
+            const dataX = [13440, 16511, 18640, 28362, 57396];
+
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#e2e8f0',
+                    textStyle: { color: '#1e293b', fontFamily: 'Inter' },
+                    formatter: function (params) {
+                        const data = params[0];
+                        const valorFormateado = new Intl.NumberFormat('es-CL').format(data.value);
+                        const unidad = data.name.includes('💉') ? 'ampollas' : 'estuches';
+                        
+                        return `<div class="font-bold mb-1 text-sm">${data.name}</div>
+                                <div class="text-slate-600 flex items-center gap-2 text-sm">
+                                    <span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${data.color};"></span>
+                                    ${valorFormateado} ${unidad}
+                                </div>`;
+                    }
+                },
+                grid: {
+                    top: '5%',
+                    left: '2%', 
+                    right: '8%', 
+                    bottom: '5%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    splitLine: { lineStyle: { type: 'dashed', color: '#e2e8f0' } },
+                    axisLabel: {
+                        fontFamily: 'Inter',
+                        color: '#94a3b8',
+                        formatter: function(value) {
+                            return new Intl.NumberFormat('es-CL').format(value);
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: dataY,
+                    axisTick: { show: false },
+                    axisLine: { show: false },
+                    axisLabel: {
+                        fontFamily: 'Inter',
+                        color: '#475569',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        margin: 16
+                    }
+                },
+                series: [
+                    {
+                        name: 'Envases robados',
+                        type: 'bar',
+                        barWidth: '35%',
+                        itemStyle: {
+                            color: '#3b82f6',
+                            borderRadius: [0, 6, 6, 0]
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            fontFamily: 'Inter',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            color: '#334155',
+                            formatter: function(params) {
+                                return new Intl.NumberFormat('es-CL').format(params.value);
+                            },
+                            offset: [10, 0]
+                        },
+                        data: dataX,
+                        animationDuration: 1500,
+                        animationEasing: 'cubicOut'
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+            window.addEventListener('resize', () => myChart.resize());
+        });
+    </script>
+</body>
+</html>
